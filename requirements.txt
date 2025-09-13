@@ -1,0 +1,4 @@
+simpletransformers
+pandas
+requests
+torch
