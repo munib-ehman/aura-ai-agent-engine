@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-09-13T16:45:00Z",
+  "pending_task": "Finish up work and get to the airport for my flight",
+  "location": { "current_area": "Faisal Town, Lahore" },
+  "live_weather": { "condition": "Cloudy", "temperature_celsius": 32 },
+  "live_traffic": {
+    "time_to_home_min": 25,
+    "time_from_home_to_airport_min": 40
+  },
+  "upcoming_event": {
+    "title": "Flight to Karachi - PK307",
+    "start_time": "2025-09-13T20:00:00Z",
+    "location": "Allama Iqbal International Airport"
+  },
+  "user_profile": {
+    "home_location": "Bahria Town, Lahore",
+    "installed_apps": ["Uber", "WhatsApp", "AirlinesApp"],
+    "app_preferences": {
+      "ride_hailing": "Uber",
+      "personal_message": "WhatsApp"
+    },
+    "contacts": { "Ayesha (Spouse)": "+923011234567" }
+  }
+}

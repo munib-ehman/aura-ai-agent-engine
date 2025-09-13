@@ -1,0 +1,15 @@
+{
+  "timestamp": "15:30",
+  "pending_task": "Respond to Saad about the cricket match and check the score",
+  "location": { "current_area": "Home" },
+  "recent_message": {
+    "from": "Saad",
+    "app": "WhatsApp",
+    "content": "Pak vs India match dekh rahe ho? Kya score hai?"
+  },
+  "user_profile": {
+    "installed_apps": ["WhatsApp", "Twitter", "Facebook"],
+    "app_preferences": { "chat": "WhatsApp" },
+    "contacts": { "Saad": "+923001234567" }
+  }
+}

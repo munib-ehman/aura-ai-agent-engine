@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-09-15T18:00:00Z",
+  "pending_task": "It's getting late, I should call my mother.",
+  "location": { "current_area": "Home" },
+  "user_profile": {
+    "installed_apps": ["Phone", "WhatsApp", "Signal"],
+    "app_preferences": {
+      "personal_message": "WhatsApp",
+      "personal_call": "Phone"
+    },
+    "contacts": { "Mother": "+923009876543" }
+  }
+}

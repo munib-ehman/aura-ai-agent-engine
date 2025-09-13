@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-09-15T15:00:00Z",
+  "pending_task": "Plan a dinner for the project team for tonight.",
+  "location": { "current_area": "Arfa Karim Tower, Lahore" },
+  "user_profile": {
+    "installed_apps": ["Slack", "WhatsApp", "FoodPanda", "Uber"],
+    "app_preferences": {
+      "work_comms": "Slack",
+      "personal_message": "WhatsApp",
+      "food_delivery": "FoodPanda"
+    },
+    "contacts": { "Project Team Slack": "#project-alpha" },
+    "user_notes": [
+      "The project team really enjoys spicy desi food.",
+      "Dinner budget should be around Rs. 2000 per person."
+    ]
+  }
+}

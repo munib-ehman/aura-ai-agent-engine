@@ -1,0 +1,16 @@
+{
+  "timestamp": "19:15",
+  "pending_task": "Get ready and go to the Atif Aslam Concert",
+  "location": { "current_area": "Office in DHA Phase 5, Lahore" },
+  "live_weather": { "condition": "Rain", "temperature_celsius": 26 },
+  "upcoming_event": {
+    "title": "Atif Aslam Concert",
+    "start_time": "20:30",
+    "location": "Alhamra Arts Council, Mall Road"
+  },
+  "live_traffic": { "travel_time_min": 45 },
+  "user_profile": {
+    "installed_apps": ["Careem", "Google Maps", "WhatsApp", "Spotify"],
+    "app_preferences": { "ride_hailing": "Careem" }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-18T10:55:00Z",
+  "pending_task": "Need to prepare for the Q3 Strategy presentation.",
+  "upcoming_event": {
+    "title": "Weekly Sync",
+    "start_time": "2025-09-18T11:00:00Z"
+  },
+  "next_event": {
+    "title": "Q3 Strategy Presentation",
+    "start_time": "2025-09-18T12:00:00Z"
+  },
+  "user_profile": {
+    "installed_apps": ["Outlook", "Microsoft Office", "Slack"],
+    "app_preferences": { "work_docs": "Microsoft Office" }
+  }
+}

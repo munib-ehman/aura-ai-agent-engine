@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-17T07:30:00Z",
+  "pending_task": "Just finished my morning run.",
+  "location": { "current_area": "Model Town Park, Lahore" },
+  "user_profile": {
+    "installed_apps": ["Strava", "MyFitnessPal", "FoodPanda"],
+    "app_preferences": {
+      "workout_log": "Strava",
+      "food_delivery": "FoodPanda"
+    },
+    "user_notes": [
+      "I usually have a protein shake after running.",
+      "Need to buy more protein powder."
+    ]
+  }
+}

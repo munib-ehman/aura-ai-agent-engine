@@ -1,0 +1,10 @@
+{
+  "timestamp": "16:50",
+  "location": { "current_area": "Office" },
+  "pending_task": "Send the first week of July weekly report to the team analysts",
+  "user_profile": {
+    "installed_apps": ["Outlook", "Gmail", "Slack", "Files"],
+    "app_preferences": { "work_email": "Outlook", "personal_email": "Gmail" },
+    "contacts": { "team_analysts": "analysts@sample.com" }
+  }
+}
