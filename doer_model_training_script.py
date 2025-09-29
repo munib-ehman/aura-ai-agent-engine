@@ -1,93 +1,81 @@
 import json
 import pandas as pd
-from simpletransformers.t5 import T5Model, T5Args
-import os
+from datasets import Dataset
+# --- CHANGE 1: IMPORT THE DATA COLLATOR ---
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainingArguments, Seq2SeqTrainer, DataCollatorForSeq2Seq
 
 # --- Configuration ---
-MODEL_TYPE = 't5'
-MODEL_NAME = 't5-small'
-DATASET_FILE = 'doer_dataset.jsonl'
-OUTPUT_DIR = 'outputs/doer_model'
-TRAIN_EPOCHS = 4
+BASE_MODEL = "google/flan-t5-small"
+DATASET_FILE = "doer_dataset_new_template.jsonl"
+# Let's save to a new, clean folder to be safe
+OUTPUT_MODEL_PATH = "/content/drive/MyDrive/AI_OS_Models/ai_os_model_v6" 
 
-def create_training_dataframe(file_path):
-    """
-    Loads the .jsonl file and converts it into a pandas DataFrame
-    with the required 'prefix', 'input_text', and 'target_text' columns.
-    """
+# --- Your data loading function (this is perfect, no changes needed) ---
+def load_jsonl_to_dataframe(file_path):
     records = []
-    print(f"Loading and preparing dataset from '{file_path}'...")
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                # Sanitize line before parsing
-                clean_line = line.strip()
-                if clean_line:
-                    records.append(json.loads(clean_line))
-        
-        print(f"Dataset loaded. Found {len(records)} training examples.")
-        
-        # Convert the records into the format required by Simple Transformers
-        data_for_df = []
-        for record in records:
-            input_data = record.get('input', {})
-            output_data = record.get('output', {})
-            
-            # The model learns to translate from input_text to target_text
-            data_for_df.append({
-                "prefix": "workflow", # A task prefix helps the model learn
-                "input_text": json.dumps(input_data),
-                "target_text": json.dumps(output_data)
-            })
-            
-        return pd.DataFrame(data_for_df)
-
-    except FileNotFoundError:
-        print(f"Error: Dataset file not found at '{file_path}'")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from the dataset file: {e}")
-        return None
-
-def train_doer_model():
-    """
-    Trains the T5 model on our custom dataset and saves it.
-    """
-    print("--- Starting Training for Custom 'Doer' Model ---")
-    train_df = create_training_dataframe(DATASET_FILE)
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            records.append(json.loads(line.strip()))
     
-    if train_df is None or train_df.empty:
-        print("Training cannot proceed without a valid dataset.")
-        return
+    data_for_df = []
+    for record in records:
+        input_data = record.get('input', {})
+        output_object = record.get('output', {})
+        prompt = f"workflow: {json.dumps(input_data)}"
+        completion = json.dumps(output_object)
+        data_for_df.append({"prompt": prompt, "completion": completion})
+    return pd.DataFrame(data_for_df)
 
-    # Configure the model's training arguments
-    model_args = T5Args()
-    model_args.max_seq_length = 512
-    model_args.train_batch_size = 2
-    model_args.eval_batch_size = 2
-    model_args.num_train_epochs = TRAIN_EPOCHS
-    model_args.overwrite_output_dir = True
-    model_args.use_cuda = False
-    model_args.output_dir = OUTPUT_DIR
-    model_args.save_steps = -1 # Save at the end of each epoch
+print("Loading dataset...")
+train_df = load_jsonl_to_dataframe(DATASET_FILE)
+hg_dataset = Dataset.from_pandas(train_df)
+print("Dataset loaded and prepared.")
 
-    # --- DEFINITIVE CUDA FIX ---
-    # We are being extremely explicit to force CPU usage.
-    model_args.use_cuda = False
-    model_args.n_gpu = 0
+# --- Your tokenization function (this is perfect, no changes needed) ---
+print("\nTokenizing data...")
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
+def tokenize_function(examples):
+    model_inputs = tokenizer(examples["prompt"], max_length=1024, truncation=True)
+    labels = tokenizer(text_target=examples["completion"], max_length=1024, truncation=True)
+    model_inputs["labels"] = labels["input_ids"]
+    return model_inputs
+tokenized_dataset = hg_dataset.map(tokenize_function, batched=True)
+print("Tokenization complete.")
 
-    # Initialize the T5 model
-    print(f"Initializing '{MODEL_NAME}' model...")
-    # The 'cuda_device=-1' is a final, forceful override.
-    model = T5Model(MODEL_TYPE, MODEL_NAME, args=model_args,use_cuda=False, cuda_device=-1)
+# --- Train the Model ---
+print("\nSetting up trainer...")
+model = AutoModelForSeq2SeqLM.from_pretrained(BASE_MODEL)
 
-    # Train the model
-    print("\n--- Starting Model Fine-Tuning ---")
-    model.train_model(train_df)
-    
-    print("\n--- Training Complete ---")
-    print(f"Your custom 'Doer' model has been saved to the '{OUTPUT_DIR}' directory.")
+# Define training arguments
+training_args = Seq2SeqTrainingArguments(
+    output_dir=OUTPUT_MODEL_PATH,
+    report_to="none",
+    num_train_epochs=35,
+    per_device_train_batch_size=2,
+    learning_rate=5e-5,
+    weight_decay=0.01,
+    save_total_limit=3,
+    predict_with_generate=True,
+    push_to_hub=False
+)
 
-if __name__ == '__main__':
-    train_doer_model()
+# --- CHANGE 2: CREATE THE DATA COLLATOR ---
+# This will handle the padding for us automatically
+data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
+# --- CHANGE 3: GIVE THE COLLATOR TO THE TRAINER ---
+trainer = Seq2SeqTrainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
+    tokenizer=tokenizer,
+    data_collator=data_collator  # Add the data collator here
+)
+
+print("\n--- Starting Model Training ---")
+trainer.train()
+print("\n--- Training Complete ---")
+
+print(f"\nSaving model to {OUTPUT_MODEL_PATH}...")
+trainer.save_model()
+print("Model saved successfully!")
